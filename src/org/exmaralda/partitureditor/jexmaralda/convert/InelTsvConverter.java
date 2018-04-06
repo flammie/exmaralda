@@ -109,14 +109,15 @@ public class InelTsvConverter {
             n_speakers++;
         }
         Timeline timeline = bt.getBody().getCommonTimeline();
-        String tli = timeline.addTimelineItem();
+        String tli_start = timeline.addTimelineItem();
+        String tli_end = tli_start;
         int n_tiers  = 0;
-        Map<String, Tier> tiermap = new HashMap<String, String>();
+        Map<String, Tier> tiermap = new HashMap<String, Tier>();
         for (String s : tiers) {
             String tid = "TIE" + n_tiers;
             Tier tier = new Tier();
             String[] fields = s.split("\\t");
-            tier.setID("TIE" + tiers);
+            tier.setID(tid);
             tier.setType(fields[1]);
             tier.setDisplayName(fields[0]);
             tier.setSpeaker(speakermap.get(fields[2]));
@@ -125,31 +126,60 @@ public class InelTsvConverter {
             } catch (JexmaraldaException ex) {
                 ex.printStackTrace();
             }
-            tiermap.add(fields[0], tier);
+            tiermap.put(fields[0], tier);
             n_tiers++;
         }
+        // map from TSV time presenetaiton to timeline id's
+        Map<String, String> tlimap = new HashMap<String, String>();
+        tlimap.put("0", tli_start);
         for (String line : lines) {
             String[] fields = line.split("\\t");
-            Event e = new Event;
+            Event e = new Event();
             e.setDescription(fields[3]);
-            String tli_start = timeline.addTimelineItem(fields[4]);
-            String tli_end = timeline.addTimelineItem(fields[5]);
-            e.setStart(tli_start);
-            e.setEnd(tli_end);
-            Tier tier = tiermap.get(fields[0]);
-            tier.addEvent(e);
+            String e_start = "";
+            String e_end = "";
+            try {
+                if (tlimap.containsKey(fields[4])) {
+                    e_start = tlimap.get(fields[4]);
+                } else {
+                    e_start = timeline.getFreeID();
+                    TimelineItem tli = new TimelineItem(e_start,
+                            timestampToDouble(fields[4]));
+                    timeline.addTimelineItem(tli);
+                    tlimap.put(fields[4], e_start);
+                }
+                if (tlimap.containsKey(fields[5])) {
+                    e_end = tlimap.get(fields[5]);
+                } else {
+                    e_end = timeline.getFreeID();
+                    TimelineItem tli = new TimelineItem(e_end,
+                            timestampToDouble(fields[5]));
+                    timeline.addTimelineItem(tli);
+                    tlimap.put(fields[4], e_end);
+                }
+                e.setStart(e_start);
+                e.setEnd(e_end);
+                Tier tier = tiermap.get(fields[0]);
+                tier.addEvent(e);
+                tli_end = e_end;
+            } catch (JexmaraldaException je) {
+                je.printStackTrace();
+            }
         }
         return bt;
     }
 
+    private static double timestampToDouble(String timestamp) {
+        return Double.parseDouble(timestamp);
+    }
 
     public static void main(String[] args){
         try {
-            File f = new File("T:\\TP-Z2\\DATEN\\Anne_Siekmeyer\\EXMARALDA\\hlte\\G73\\abschrift_tagged.txt");
-            TreeTaggerConverter tc = new TreeTaggerConverter();
+            File f = new File("test.tsv");
+            InelTsvConverter tc = new InelTsvConverter();
             tc.readText(f);
             BasicTranscription bt = tc.importText();
-            bt.writeXMLToFile("T:\\TP-Z2\\DATEN\\Anne_Siekmeyer\\EXMARALDA\\ausgewhlte\\G73\\abschrift_tagged.exb", "none");
+            bt.writeXMLToFile("test.exb", "none");
             System.out.println(tc.importText().toXML());
         } catch (PatternSyntaxException ex) {
             ex.printStackTrace();
@@ -159,49 +189,7 @@ public class InelTsvConverter {
     }
 
     public String exportBasicTranscription(BasicTranscription bt) throws IOException{
-
-        // determine main (token) tier
-        Tier mainTier = null;
-        for (int pos=0; pos<bt.getBody().getNumberOfTiers(); pos++){
-            Tier thisTier = bt.getBody().getTierAt(pos);
-            if ((thisTier.getSpeaker()!=null) && (thisTier.getType().equals("t"))){
-                mainTier = thisTier;
-                break;
-            }
-        }
-
-        if (mainTier==null){
-            throw new IOException("No main tier found for this transcription");
-        }
-
-        // determine dependent (lemma, pos, etc.) tiers
-        Vector<Tier> dependentTiers = new Vector<Tier>();
-        for (int pos=0; pos<bt.getBody().getNumberOfTiers(); pos++){
-            Tier thisTier = bt.getBody().getTierAt(pos);
-            if ((mainTier.getSpeaker().equals(thisTier.getSpeaker())) && (thisTier.getType().equals("a"))){
-                dependentTiers.addElement(thisTier);
-            }
-        }
-
-        StringBuffer result = new StringBuffer();
-
-        for (int pos=0; pos<bt.getBody().getCommonTimeline().getNumberOfTimelineItems(); pos++){
-            TimelineItem tli = bt.getBody().getCommonTimeline().getTimelineItemAt(pos);
-            try {
-                Event e = mainTier.getEventAtStartPoint(tli.getID());
-                result.append(e.getDescription().trim());
-                for (Tier tier : dependentTiers){
-                    if (tier.containsEventAtStartPoint(tli.getID())){
-                        Event a = tier.getEventAtStartPoint(tli.getID());
-                        result.append("\t");
-                        result.append(a.getDescription());
-                    }
-                    //if (!(dependentTiers.indexOf(tier)==dependentTiers.size()-1)){}
-                }
-                result.append(System.getProperty("line.separator"));
-            } catch (JexmaraldaException ex) { /*do nothing - we simply ignore this non-existing event */}
-        }
-        return result.toString();
+        return "FIXME";
     }
 
     public void writeText(BasicTranscription bt, File file) throws IOException {
