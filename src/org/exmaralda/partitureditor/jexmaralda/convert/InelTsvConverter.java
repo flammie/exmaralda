@@ -155,7 +155,7 @@ public class InelTsvConverter {
                     TimelineItem tli = new TimelineItem(e_end,
                             timestampToDouble(fields[5]));
                     timeline.addTimelineItem(tli);
-                    tlimap.put(fields[4], e_end);
+                    tlimap.put(fields[5], e_end);
                 }
                 e.setStart(e_start);
                 e.setEnd(e_end);
