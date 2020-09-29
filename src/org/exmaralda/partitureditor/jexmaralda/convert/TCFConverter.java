@@ -5,6 +5,8 @@
  * libraries, you need to have wlfxb.jar and oaipmh-cmdi-bindings.jar on your
  * classpath. I (tommi) used wlfxb-1.3.4-SNAPSHOT.jar and
  * oaipmh-cmdi-bindings-1.0.6-SNAPSHOT.jar from March 2016 github master.
+ *
+ * Updated to 1.4.4 SNAPSHOT for tcf 5 support
  */
 
 package org.exmaralda.partitureditor.jexmaralda.convert;
@@ -64,7 +66,7 @@ public class TCFConverter {
 
     TextCorpusStored textCorpus;
     TextSourceLayerStored textSource;
-    static String TCF_STYLESHEET_PATH = 
+    static String TCF_STYLESHEET_PATH =
         "/org/exmaralda/partitureditor/jexmaralda/xsl/ISOTEI2TCF.xsl";
 
     /** Creates a new instance of TCFConverter */
@@ -111,18 +113,18 @@ public class TCFConverter {
      * @param file
      *  @fixme doesn't actually decode.
      */
-    public void readText(File file, String encoding) throws 
+    public void readText(File file, String encoding) throws
         FileNotFoundException, IOException, UnsupportedEncodingException
     {
         // XXX: encoding
         readText(new FileInputStream(file));
     }
 
-    /** 
+    /**
      * Imports some parts of TCF file into tiers.
      * The timeline is based on the tokens and rests are aligned on their
      * bounding points. Text is assumed to stretch over all tokens.
-     * @return 
+     * @return
      */
     public BasicTranscription importText(){
         BasicTranscription bt;
@@ -134,7 +136,7 @@ public class TCFConverter {
                             new FileOutputStream(tempfile), "utf-8"));
                 tempwriter.write(textSource.getText());
                 TEIConverter teireader = new TEIConverter();
-                System.err.println("Wrote temp TEI to " + 
+                System.err.println("Wrote temp TEI to " +
                         tempfile.getAbsolutePath());
                 bt = teireader.readTEIFromFile(tempfile.getAbsolutePath());
                 if (bt != null) {
@@ -231,7 +233,7 @@ public class TCFConverter {
                     descr = descr + " " + tokenses[j].getString();
                 }
                 Event e = new Event();
-                String tliStartNow = 
+                String tliStartNow =
                     tokenStartTimelineItems.get(tokenses[0].getID());
                 e.setStart(tliStartNow);
                 e.setDescription(descr);
@@ -258,7 +260,7 @@ public class TCFConverter {
                 Event e = new Event();
                 e.setDescription(pos.getString());
                 Token[] tokenses = poses.getTokens(pos);
-                String tliStartNow = 
+                String tliStartNow =
                     tokenStartTimelineItems.get(tokenses[0].getID());
                 e.setStart(tliStartNow);
                 String tliEndNow = tokenEndTimelineItems.get(
@@ -282,7 +284,7 @@ public class TCFConverter {
                 Event e = new Event();
                 e.setDescription(lemma.getString());
                 Token[] tokenses = lemmas.getTokens(lemma);
-                String tliStartNow = 
+                String tliStartNow =
                     tokenStartTimelineItems.get(tokenses[0].getID());
                 e.setStart(tliStartNow);
                 String tliEndNow = tokenEndTimelineItems.get(
@@ -314,13 +316,13 @@ public class TCFConverter {
         return bt;
     }
     public void writeHIATTCFToFile(BasicTranscription bt, String filename)
-        throws SAXException, FSMException, XSLTransformException, 
+        throws SAXException, FSMException, XSLTransformException,
                           JDOMException, IOException, Exception {
         writeHIATTCFToFile(bt, filename, "de");
     }
 
     public void writeHIATTCFToFile(BasicTranscription bt, String filename,
-            String language) throws SAXException, FSMException, 
+            String language) throws SAXException, FSMException,
            XSLTransformException, JDOMException, IOException, Exception {
         writeTCFToFile(bt, filename, language, "HIAT");
     }
@@ -353,7 +355,7 @@ public class TCFConverter {
                     nameOfDeepSegmentation, "SpeakerContribution_Event", true);
         System.out.println("Merged");
         generateWordIDs(teiDoc);
-        
+
         StylesheetFactory ssf = new StylesheetFactory(true);
         String tcf = ssf.applyInternalStylesheetToString(TCF_STYLESHEET_PATH,
                 IOUtilities.documentToString(teiDoc));
@@ -361,19 +363,19 @@ public class TCFConverter {
 
         // set the language (not too elegant...)
         XPath xp = XPath.newInstance("//tcf:TextCorpus");
-        xp.addNamespace("tcf", "http://www.dspin.de/data/textcorpus");        
+        xp.addNamespace("tcf", "http://www.dspin.de/data/textcorpus");
         Element textCorpusElement = (Element) xp.selectSingleNode(tcfDoc);
         textCorpusElement.setAttribute("lang", language);
         FileIO.writeDocumentToLocalFile(filename, tcfDoc);
         System.out.println("document written.");
     }
 
-    public void writeFOLKERTCFToFile(Document flnDoc, String absolutePath) 
+    public void writeFOLKERTCFToFile(Document flnDoc, String absolutePath)
         throws SAXException, ParserConfigurationException, IOException,
                           TransformerConfigurationException,
                           TransformerException, JDOMException {
         StylesheetFactory sf = new StylesheetFactory(true);
-        String result = 
+        String result =
             sf.applyInternalStylesheetToString(
                     "/org/exmaralda/tei/xml/folker2isotei.xsl",
                     IOUtilities.documentToString(flnDoc));
@@ -386,7 +388,7 @@ public class TCFConverter {
     }
 
     private void generateWordIDs(Document document) throws JDOMException{
-        XPath wordXPath = XPath.newInstance("//tei:w"); 
+        XPath wordXPath = XPath.newInstance("//tei:w");
         wordXPath.addNamespace("tei", "http://www.tei-c.org/ns/1.0");
         List words = wordXPath.selectNodes(document);
         int count=0;
@@ -398,7 +400,7 @@ public class TCFConverter {
             word.setAttribute("id", wordID, Namespace.XML_NAMESPACE);
         }
         // new 02-12-2014
-        XPath pcXPath = XPath.newInstance("//tei:pc"); 
+        XPath pcXPath = XPath.newInstance("//tei:pc");
         pcXPath.addNamespace("tei", "http://www.tei-c.org/ns/1.0");
         List pcs = pcXPath.selectNodes(document);
         count=0;
@@ -433,7 +435,7 @@ public class TCFConverter {
         }
     }
 
-    public String exportBasicTranscription(BasicTranscription bt) 
+    public String exportBasicTranscription(BasicTranscription bt)
             throws IOException {
         Timeline commonTimeline = bt.getBody().getCommonTimeline();
         // XXX: can I get metadatas
@@ -442,7 +444,7 @@ public class TCFConverter {
         Tier tokenTier = null;
         for (int pos = 0; pos < bt.getBody().getNumberOfTiers(); pos++) {
             Tier thisTier = bt.getBody().getTierAt(pos);
-            if ((thisTier.getSpeaker() != null) && 
+            if ((thisTier.getSpeaker() != null) &&
                     (thisTier.getType().equals("t")) &&
                     (thisTier.getDisplayName().contains("token"))) {
                 tokenTier = thisTier;
@@ -462,7 +464,7 @@ public class TCFConverter {
             long tokenstart = 0;
             long tokenend = 0;
             try {
-                TimelineItem tli = 
+                TimelineItem tli =
                     commonTimeline.getTimelineItemWithID(e.getStart());
                 tokenstart = Math.round(tli.getTime());
                 tli = commonTimeline.getTimelineItemWithID(e.getEnd());
@@ -490,12 +492,12 @@ public class TCFConverter {
                 textCorpus.createTextLayer().addText(e.getDescription());
             } else if ((thisTier.getType().equals("t")) &&
                     (thisTier.getDisplayName().contains("sentence"))) {
-                SentencesLayer sentencesLayer = 
+                SentencesLayer sentencesLayer =
                     textCorpus.createSentencesLayer();
                 for (int j = 0; j < thisTier.getNumberOfEvents(); j++) {
                     Event e = thisTier.getEventAt(j);
                     // TODO: calculate span and reconstruct tokens :-///
-                    int sentStart = 
+                    int sentStart =
                         tokenStarts.get(e.getStart()).getOrder();
                     int sentEnd =
                         tokenEnds.get(e.getEnd()).getOrder();
@@ -513,7 +515,7 @@ public class TCFConverter {
             } else if ((thisTier.getType().equals("a")) &&
                     (thisTier.getDisplayName().contains("POS"))) {
                 // XXX: restore somewhereabouts
-                PosTagsLayer posTagsLayer = 
+                PosTagsLayer posTagsLayer =
                     textCorpus.createPosTagsLayer("UNKNOWN");
                 for (int j = 0; j < thisTier.getNumberOfEvents(); j++) {
                     Event e = thisTier.getEventAt(j);
