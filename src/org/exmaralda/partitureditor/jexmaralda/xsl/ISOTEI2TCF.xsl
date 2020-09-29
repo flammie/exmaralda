@@ -12,7 +12,7 @@
     xmlns:metadata="http://www.dspin.de/data/metadata"
     xpath-default-namespace="xmlns=http://www.dspin.de/data">
     <xsl:template match="/">
-        <D-Spin xmlns="http://www.dspin.de/data" version="0.4">
+        <D-Spin xmlns="http://www.dspin.de/data" version="5">
             
             <!-- *********************************************************** -->
             <!-- ***********          Metadata Header          ************* -->
