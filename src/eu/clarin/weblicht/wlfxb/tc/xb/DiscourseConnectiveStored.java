@@ -19,50 +19,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * 
+ *
  */
 package eu.clarin.weblicht.wlfxb.tc.xb;
 
 import eu.clarin.weblicht.wlfxb.tc.api.DiscourseConnective;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
  *
  */
-@XmlRootElement(name=DiscourseConnectiveStored.XML_NAME)
+@XmlRootElement(name = DiscourseConnectiveStored.XML_NAME)
 @XmlAccessorType(XmlAccessType.NONE)
 public class DiscourseConnectiveStored implements DiscourseConnective {
-	
-	public static final String XML_NAME = "connective";
 
-	@XmlAttribute(name="type")
-	protected String type;
-	@XmlAttribute(name=CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
-	protected String[] tokRefs;
-	
-	
+    public static final String XML_NAME = "connective";
 
-	@Override
-	public String getType() {
-		return type;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		if (type != null) {
-			sb.append(type);
-			sb.append(" ");
-		}
-		sb.append(Arrays.toString(tokRefs));
-		return sb.toString();
-	}
+    @XmlAttribute(name = "type")
+    protected String type;
+    @XmlAttribute(name = CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
+    protected String[] tokRefs;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+        return DiscourseConnective.super.retrieveAttributes(extraAttributes);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (type != null) {
+            sb.append(type);
+            sb.append(" ");
+        }
+        sb.append(Arrays.toString(tokRefs));
+        return sb.toString();
+    }
 
 }
-

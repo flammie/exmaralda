@@ -27,7 +27,9 @@ import eu.clarin.weblicht.wlfxb.tc.api.CorrectionOperation;
 import eu.clarin.weblicht.wlfxb.tc.api.OrthCorrection;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -44,6 +46,8 @@ public class OrthCorrectionStored implements OrthCorrection {
     protected String[] tokRefs;
     @XmlAttribute(name = "operation", required = true)
     protected CorrectionOperation operation;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
     @Override
     public String getString() {
@@ -56,9 +60,15 @@ public class OrthCorrectionStored implements OrthCorrection {
     }
 
     @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+       return OrthCorrection.super.retrieveAttributes(extraAttributes);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(corrString).append(" - ").append(operation.name()).append(Arrays.toString(tokRefs));
         return sb.toString();
     }
+
 }

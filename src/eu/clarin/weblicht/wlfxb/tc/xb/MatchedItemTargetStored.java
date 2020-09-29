@@ -23,49 +23,52 @@
  */
 package eu.clarin.weblicht.wlfxb.tc.xb;
 
-import eu.clarin.weblicht.wlfxb.tc.api.WordSplit;
+import eu.clarin.weblicht.wlfxb.tc.api.MatchedItemTarget;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
  *
  */
+@XmlRootElement(name = MatchedItemTargetStored.XML_NAME)
 @XmlAccessorType(XmlAccessType.NONE)
-public class WordSplitStored implements WordSplit {
+public class MatchedItemTargetStored implements MatchedItemTarget {
 
-    public static final String XML_NAME = "split";
-    @XmlValue
-    protected int[] splitIndices;
-    @XmlAttribute(name = CommonAttributes.TOKEN_REFERENCE, required = true)
-    protected String tokRef;
+    public static final String XML_NAME = "target";
+    @XmlAttribute(name = CommonAttributes.NAME, required = true)
+    protected String name;
+    @XmlAttribute(name = CommonAttributes.VALUE, required = true)
+    protected String value;
     @XmlAnyAttribute
     protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
-    @Override
-    public int[] getIndices() {
-        return splitIndices;
+    MatchedItemTargetStored() {
+    }
+
+    MatchedItemTargetStored(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
     @Override
     public LinkedHashMap<String, String> getExtraAttributes() {
-        return WordSplit.super.retrieveAttributes(extraAttributes);
+        return MatchedItemTarget.super.retrieveAttributes(extraAttributes);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(tokRef);
+        StringBuilder sb = new StringBuilder(XML_NAME);
         sb.append(" ");
-        sb.append(Arrays.toString(splitIndices));
+        sb.append(name);
+        sb.append(" ");
+        sb.append(value);
         return sb.toString();
     }
-
 }

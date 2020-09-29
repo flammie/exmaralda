@@ -18,16 +18,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
 /**
- * @author Yana Panchenko
  *
+ * @author felahi
  */
-public interface PhoneticsSegment extends ExtraAttributes{
+public interface MorphologyTag {
 
-    public Pronunciation[] getPronunciations();
+    public boolean isScore();
+
+    public Double getScore();
+
+    public Feature[] getFeatures();
+
 }

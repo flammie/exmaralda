@@ -26,7 +26,9 @@ package eu.clarin.weblicht.wlfxb.tc.xb;
 import eu.clarin.weblicht.wlfxb.tc.api.PosTag;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -44,6 +46,13 @@ public class PosTagStored implements PosTag {
     protected String tagId;
     @XmlAttribute(name = CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
     protected String[] tokRefs;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
+  
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+        return PosTag.super.retrieveAttributes(extraAttributes);
+    }
 
     @Override
     public String getString() {

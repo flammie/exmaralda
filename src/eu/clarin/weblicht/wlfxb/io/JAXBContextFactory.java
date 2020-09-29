@@ -18,16 +18,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
- */
-package eu.clarin.weblicht.wlfxb.tc.api;
+package eu.clarin.weblicht.wlfxb.io;
 
-/**
- * @author Yana Panchenko
- *
- */
-public interface PhoneticsSegment extends ExtraAttributes{
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 
-    public Pronunciation[] getPronunciations();
+public interface JAXBContextFactory {
+    JAXBContext newInstance(Class... classesToBeBound ) throws JAXBException;
 }

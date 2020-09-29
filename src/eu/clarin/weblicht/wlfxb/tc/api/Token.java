@@ -20,7 +20,7 @@
  */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
-public interface Token {
+public interface Token extends ExtraAttributes{
 
     public String getString();
 
@@ -31,4 +31,9 @@ public interface Token {
     public Long getStart();
 
     public Long getEnd();
+
+    public String getSurfaceForm();
+
+    public String[] getParts();
+
 }

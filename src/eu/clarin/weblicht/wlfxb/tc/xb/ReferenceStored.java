@@ -26,11 +26,14 @@ package eu.clarin.weblicht.wlfxb.tc.xb;
 import eu.clarin.weblicht.wlfxb.tc.api.Reference;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -54,6 +57,8 @@ public class ReferenceStored implements Reference {
     protected String[] tokRefs;
     @XmlAttribute(name = "mintokIDs", required = true)
     protected String[] minTokRefs;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
     @Override
     public String getType() {
@@ -73,6 +78,11 @@ public class ReferenceStored implements Reference {
         if (this.targetIds != null && this.targetIds.length == 0) {
             this.targetIds = null;
         }
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+        return Reference.super.retrieveAttributes(extraAttributes);
     }
 
     @Override

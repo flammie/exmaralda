@@ -18,16 +18,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
-/**
- * @author Yana Panchenko
- *
- */
-public interface PhoneticsSegment extends ExtraAttributes{
+import java.util.LinkedHashMap;
 
-    public Pronunciation[] getPronunciations();
+/**
+ * The <tt>Chunk</tt> is consists of one or more tokens. A chunk is described by
+ * one or more categories (such as NP-chunk, VP-chunk). The categories are
+ * represented as attributes. Any number of attributes can be added in a chunk.
+ *
+ * @author Mohammad Fazleh Elahi
+ */
+public interface Chunk {
+
+    public LinkedHashMap<String, String> getTypes();
 }

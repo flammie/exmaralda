@@ -23,65 +23,51 @@
  */
 package eu.clarin.weblicht.wlfxb.tc.xb;
 
-import eu.clarin.weblicht.wlfxb.tc.api.Sentence;
+
+import eu.clarin.weblicht.wlfxb.tc.api.TopologicalField;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
+
 import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 
 /**
- * @author Yana Panchenko
+ * @author Neele Witte
  *
  */
-@XmlRootElement(name = SentenceStored.XML_NAME)
+@XmlRootElement(name = TopologicalFieldStored.XML_NAME)
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"tokIds", "end", "start"})
-public class SentenceStored implements Sentence {
+public class TopologicalFieldStored implements TopologicalField {
 
-    public static final String XML_NAME = "sentence";
+    public static final String XML_NAME = "field";
+    @XmlValue
+    protected String tagString;
     @XmlAttribute(name = CommonAttributes.ID)
-    protected String sentenceId;
+    protected String tagId;
     @XmlAttribute(name = CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
-    protected String[] tokIds;
-    @XmlAttribute(name = CommonAttributes.START_CHAR_OFFSET)
-    protected Integer start;
-    @XmlAttribute(name = CommonAttributes.END_CHAR_OFFSET)
-    protected Integer end;
+    protected String[] tokRefs;
     @XmlAnyAttribute
     protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
-
+  
     @Override
     public LinkedHashMap<String, String> getExtraAttributes() {
-        return Sentence.super.retrieveAttributes(extraAttributes);
+        return TopologicalField.super.retrieveAttributes(extraAttributes);
     }
 
     @Override
-    public Integer getStartCharOffset() {
-        return start;
-    }
-
-    @Override
-    public Integer getEndCharOffset() {
-        return end;
+    public String getString() {
+        return tagString;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (sentenceId != null) {
-            sb.append(sentenceId);
+        if (tagId != null) {
+            sb.append(tagId);
             sb.append(" -> ");
         }
-        sb.append(Arrays.toString(tokIds));
-        if (start != null && end != null) {
-            sb.append(" (");
-            sb.append(start);
-            sb.append("-");
-            sb.append(end);
-            sb.append(")");
-        }
+        sb.append(this.tagString).append(" ").append(Arrays.toString(tokRefs));
         return sb.toString();
     }
-
 }

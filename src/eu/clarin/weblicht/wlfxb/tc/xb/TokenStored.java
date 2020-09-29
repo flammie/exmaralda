@@ -25,7 +25,9 @@ package eu.clarin.weblicht.wlfxb.tc.xb;
 
 import eu.clarin.weblicht.wlfxb.tc.api.Token;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -33,7 +35,7 @@ import javax.xml.bind.annotation.*;
  */
 @XmlRootElement(name = TokenStored.XML_NAME)
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = {"end", "start", "tokenId"})
+@XmlType(propOrder = {"end", "start", "tokenId", "tokenString"})
 public class TokenStored implements Token {
 
     public static final String XML_NAME = "token";
@@ -47,6 +49,13 @@ public class TokenStored implements Token {
     protected Long start;
     //@XmlAttribute(name=CommonAttributes.END_CHAR_OFFSET)
     //Long end;
+    @XmlAttribute(name = CommonAttributes.SURFACE_FORM)
+    protected String surfaceForm;
+
+    @XmlAttribute(name = CommonAttributes.PARTS, required = true)
+    protected String[] parts;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
     protected int order;
 
     @Override
@@ -79,6 +88,21 @@ public class TokenStored implements Token {
     }
 
     @Override
+    public String getSurfaceForm() {
+        return surfaceForm;
+    }
+
+    @Override
+    public String[] getParts() {
+        return parts;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+       return Token.super.retrieveAttributes(extraAttributes);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(order + ": " + tokenId);
         sb.append(" -> ");
@@ -92,4 +116,5 @@ public class TokenStored implements Token {
         }
         return sb.toString();
     }
+
 }

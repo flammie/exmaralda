@@ -26,7 +26,9 @@ package eu.clarin.weblicht.wlfxb.tc.xb;
 import eu.clarin.weblicht.wlfxb.tc.api.Lemma;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -44,10 +46,22 @@ public class LemmaStored implements Lemma {
     protected String lemmaId;
     @XmlAttribute(name = CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
     protected String[] tokRefs;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
     @Override
     public String getString() {
         return lemmaString;
+    }
+
+    @Override
+    public String getLemmaId() {
+        return lemmaId;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+         return Lemma.super.retrieveAttributes(extraAttributes);
     }
 
     @Override
@@ -60,4 +74,5 @@ public class LemmaStored implements Lemma {
         sb.append(lemmaString).append(" ").append(Arrays.toString(tokRefs));
         return sb.toString();
     }
+
 }

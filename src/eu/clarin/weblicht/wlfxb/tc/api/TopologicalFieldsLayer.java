@@ -18,16 +18,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
- */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
-/**
- * @author Yana Panchenko
- *
- */
-public interface PhoneticsSegment extends ExtraAttributes{
+import java.util.List;
 
-    public Pronunciation[] getPronunciations();
+/**
+ * The <tt>TopologicalFieldLayer</tt> layer annotates tokens with topological field tags. 
+ * Each tag element references a token, or sequence of tokens, and provides the 
+ * tag string value. Tag values usually belong to some predefined standard tagset.
+ * The layer specifies the name of the tagset via the tagset attribute.
+ * 
+ * @author Neele Witte
+ */
+public interface TopologicalFieldsLayer extends TextCorpusLayer {
+
+    public String getTagset();
+
+    public TopologicalField getTag(int index);
+
+    public TopologicalField getTag(Token token);
+
+    public Token[] getTokens(TopologicalField tag);
+
+    public TopologicalField addTag(String tagString, Token tagToken);
+
+    public TopologicalField addTag(String tagString, List<Token> tagTokens);
 }

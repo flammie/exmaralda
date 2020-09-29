@@ -26,10 +26,13 @@ package eu.clarin.weblicht.wlfxb.tc.xb;
 import eu.clarin.weblicht.wlfxb.tc.api.GeoPoint;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -56,6 +59,8 @@ public class GeoPointStored implements GeoPoint {
     protected String capital;
     @XmlAttribute(name = CommonAttributes.TOKEN_SEQUENCE_REFERENCE, required = true)
     protected String[] tokRefs;
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
     @Override
     public String getLongitude() {
@@ -85,6 +90,11 @@ public class GeoPointStored implements GeoPoint {
     @Override
     public String getCapital() {
         return capital;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+         return GeoPoint.super.retrieveAttributes(extraAttributes);
     }
 
     @Override

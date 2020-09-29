@@ -44,6 +44,8 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
     private Boolean hasCharoffsets;
     @XmlAttribute(name = "segmentation")
     private Boolean hasSegmentation;
+    @XmlAttribute(name = CommonAttributes.TAGSET)
+    private String tagset;
     @XmlElement(name = MorphologyAnalysisStored.XML_NAME)
     private List<MorphologyAnalysisStored> moans = new ArrayList<MorphologyAnalysisStored>();
     private TextCorpusLayersConnector connector;
@@ -60,12 +62,26 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
     protected MorphologyLayerStored() {
     }
 
+    protected MorphologyLayerStored(String tagset) {
+        this.tagset = tagset;
+    }
+
     protected MorphologyLayerStored(Boolean hasSegmentation) {
         this.hasSegmentation = hasSegmentation;
     }
 
     protected MorphologyLayerStored(Boolean hasSegmentation, Boolean hasCharOffsets) {
         this(hasSegmentation);
+        this.hasCharoffsets = hasCharOffsets;
+    }
+
+    protected MorphologyLayerStored(String tagset, Boolean hasSegmentation) {
+        this(tagset);
+        this.hasSegmentation = hasSegmentation;
+    }
+
+    protected MorphologyLayerStored(String tagset, Boolean hasSegmentation, Boolean hasCharOffsets) {
+        this(tagset, hasSegmentation);
         this.hasCharoffsets = hasCharOffsets;
     }
 
@@ -111,6 +127,11 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
     }
 
     @Override
+    public String getTagset() {
+        return tagset;
+    }
+
+    @Override
     public Token[] getTokens(MorphologyAnalysis analysis) {
         if (analysis instanceof MorphologyAnalysisStored) {
             MorphologyAnalysisStored a = (MorphologyAnalysisStored) analysis;
@@ -146,8 +167,9 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
             }
         }
         if (!fs.features.isEmpty()) {
-            a.tag = new MorphologyTagStored();
-            a.tag.fs = fs;
+            MorphologyTagStored morphologyTagStored = new MorphologyTagStored();
+            morphologyTagStored.fs = fs;
+            a.tags.add(morphologyTagStored);
         }
         a.tokRefs = new String[analysedTokens.size()];
         for (int i = 0; i < analysedTokens.size(); i++) {
@@ -177,6 +199,71 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
             }
         }
         return a;
+    }
+
+    @Override
+    public MorphologyAnalysis addMultipleAnalysis(Token analysedTokens, List<MorphologyTagStored> tags) {
+        List<Token> toks = new ArrayList<Token>();
+        toks.add(analysedTokens);
+        return addMultipleAnalysis(toks, tags);
+    }
+
+    @Override
+    public MorphologyAnalysis addMultipleAnalysis(List<Token> analysedTokens, List<MorphologyTagStored> tags) {
+        MorphologyAnalysisStored a = new MorphologyAnalysisStored();
+        for (MorphologyTagStored tag : tags) {
+            a.tags.add(tag);
+        }
+
+        a.tokRefs = new String[analysedTokens.size()];
+        for (int i = 0; i < analysedTokens.size(); i++) {
+            Token token = analysedTokens.get(i);
+            a.tokRefs[i] = token.getID();
+            connector.token2ItsAnalysis.put(token, a);
+        }
+        moans.add(a);
+        return a;
+    }
+
+    @Override
+    public MorphologyAnalysis addMultipleAnalysis(Token analysedTokens, List<MorphologyTagStored> tags, List<MorphologySegment> segments) {
+        List<Token> toks = new ArrayList<Token>();
+        toks.add(analysedTokens);
+        return addMultipleAnalysis(toks, tags, segments);
+    }
+
+    @Override
+    public MorphologyAnalysis addMultipleAnalysis(List<Token> analysedTokens, List<MorphologyTagStored> tags, List<MorphologySegment> segments) {
+        MorphologyAnalysisStored a = (MorphologyAnalysisStored) addMultipleAnalysis(analysedTokens, tags);
+        for (MorphologySegment segment : segments) {
+            if (segment instanceof MorphologySegmentStored) {
+                MorphologySegmentStored s = (MorphologySegmentStored) segment;
+                this.hasSegmentation = true;
+                if (s.hasCharoffsets()) {
+                    this.hasCharoffsets = true;
+                }
+                if (a.segments == null) {
+                    a.segments = new ArrayList<MorphologySegmentStored>();
+                }
+                a.segments.add(s);
+            }
+        }
+        return a;
+    }
+
+    @Override
+    public MorphologyTagStored createTag(Double score, List<Feature> morphologyFeatures) {
+        FeatureStructureStored fs = new FeatureStructureStored();
+        MorphologyTagStored morphologyTagStored = new MorphologyTagStored(score);
+        for (Feature f : morphologyFeatures) {
+            if (f instanceof FeatureStored) {
+                fs.features.add((FeatureStored) f);
+            }
+        }
+        if (!fs.features.isEmpty()) {
+            morphologyTagStored.fs = fs;
+        }
+        return morphologyTagStored;
     }
 
     @Override
@@ -259,4 +346,5 @@ public class MorphologyLayerStored extends TextCorpusLayerStoredAbstract impleme
         sb.append(moans.toString());
         return sb.toString();
     }
+
 }

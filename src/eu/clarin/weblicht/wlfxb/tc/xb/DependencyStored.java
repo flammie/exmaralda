@@ -19,16 +19,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * 
+ *
  */
 package eu.clarin.weblicht.wlfxb.tc.xb;
 
 import eu.clarin.weblicht.wlfxb.tc.api.Dependency;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -36,38 +39,45 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 @XmlAccessorType(XmlAccessType.NONE)
 public class DependencyStored implements Dependency {
-	
-	public static final String XML_NAME = "dependency";
-	public static final String XML_ATTR_DEPENDENT_REFERENCE = "depIDs";
-	public static final String XML_ATTR_GOVERNOR_REFERENCE = "govIDs";
-	
-	
-	@XmlAttribute(name=CommonAttributes.FUNCTION)
-	protected String function;
-	@XmlAttribute(name=XML_ATTR_DEPENDENT_REFERENCE, required = true)
-	protected String[] depIds;
-	@XmlAttribute(name=XML_ATTR_GOVERNOR_REFERENCE)
-	protected String[] govIds;
-	
-	@Override
-	public String getFunction() {
-		return function;
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		if (function != null) {
-			sb.append(function);
-			sb.append(" ");
-		}
-		sb.append(Arrays.toString(depIds)).append(" <- ");
-		if (govIds == null) {
-			sb.append("[ ]");
-		} else {
-			sb.append(Arrays.toString(govIds));
-		}
-		return sb.toString();
-	}
+
+    public static final String XML_NAME = "dependency";
+    public static final String XML_ATTR_DEPENDENT_REFERENCE = "depIDs";
+    public static final String XML_ATTR_GOVERNOR_REFERENCE = "govIDs";
+
+    @XmlAttribute(name = CommonAttributes.FUNCTION)
+    protected String function;
+    @XmlAttribute(name = XML_ATTR_DEPENDENT_REFERENCE, required = true)
+    protected String[] depIds;
+    @XmlAttribute(name = XML_ATTR_GOVERNOR_REFERENCE)
+    protected String[] govIds;
+
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
+    
+    @Override
+    public String getFunction() {
+        return function;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+        return Dependency.super.retrieveAttributes(extraAttributes);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (function != null) {
+            sb.append(function);
+            sb.append(" ");
+        }
+        sb.append(Arrays.toString(depIds)).append(" <- ");
+        if (govIds == null) {
+            sb.append("[ ]");
+        } else {
+            sb.append(Arrays.toString(govIds));
+        }
+        return sb.toString();
+    }
 
 }

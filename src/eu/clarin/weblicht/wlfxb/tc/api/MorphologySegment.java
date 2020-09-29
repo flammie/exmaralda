@@ -27,7 +27,7 @@ package eu.clarin.weblicht.wlfxb.tc.api;
  * @author Yana Panchenko
  *
  */
-public interface MorphologySegment {
+public interface MorphologySegment extends ExtraAttributes{
 
     public String getCategory();
 

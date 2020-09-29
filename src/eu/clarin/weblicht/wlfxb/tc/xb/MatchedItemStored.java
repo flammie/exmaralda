@@ -43,9 +43,9 @@ public class MatchedItemStored implements MatchedItem {
     @XmlAttribute(name = XML_ATTRIBUTE_SOURCE_IDs)
     protected String[] srcIds;
     @XmlElement(name = XML_ELEMENT_TARGET)
-    protected List<MatchedItemTarget> targets = new ArrayList<MatchedItemTarget>();
+    protected List<MatchedItemTargetStored> targets = new ArrayList<MatchedItemTargetStored>();
     @XmlElement(name = XML_ELEMENT_CATEGORY)
-    protected List<MatchedItemCategory> categories = new ArrayList<MatchedItemCategory>();
+    protected List<MatchedItemCategoryStored> categories = new ArrayList<MatchedItemCategoryStored>();
 
     MatchedItemStored() {
     }
@@ -56,10 +56,10 @@ public class MatchedItemStored implements MatchedItem {
             this.srcIds = srcIds;
         }
         for (String name : targetsMap.keySet()) {
-            targets.add(new MatchedItemTarget(name, targetsMap.get(name)));
+            targets.add(new MatchedItemTargetStored(name, targetsMap.get(name)));
         }
         for (String name : categoriesMap.keySet()) {
-            categories.add(new MatchedItemCategory(name, categoriesMap.get(name)));
+            categories.add(new MatchedItemCategoryStored(name, categoriesMap.get(name)));
         }
     }
 
@@ -71,7 +71,7 @@ public class MatchedItemStored implements MatchedItem {
     @Override
     public Set<String> getTargetNames() {
         Set<String> names = new HashSet<String>();
-        for (MatchedItemTarget target : this.targets) {
+        for (MatchedItemTargetStored target : this.targets) {
             names.add(target.name);
         }
         return names;
@@ -79,7 +79,7 @@ public class MatchedItemStored implements MatchedItem {
 
     @Override
     public String getTargetValue(String targetName) {
-        for (MatchedItemTarget target : this.targets) {
+        for (MatchedItemTargetStored target : this.targets) {
             if (targetName.equals(target.name)) {
                 return target.value;
             }
@@ -90,7 +90,7 @@ public class MatchedItemStored implements MatchedItem {
     @Override
     public Set<String> getCategoriesNames() {
         Set<String> names = new HashSet<String>();
-        for (MatchedItemCategory cat : this.categories) {
+        for (MatchedItemCategoryStored cat : this.categories) {
             names.add(cat.name);
         }
         return names;
@@ -98,7 +98,7 @@ public class MatchedItemStored implements MatchedItem {
 
     @Override
     public String getCategoryValue(String categoryName) {
-        for (MatchedItemCategory cat : this.categories) {
+        for (MatchedItemCategoryStored cat : this.categories) {
             if (categoryName.equals(cat.name)) {
                 return cat.value;
             }
@@ -106,6 +106,25 @@ public class MatchedItemStored implements MatchedItem {
         return null;
     }
 
+    @Override
+    public LinkedHashMap<String, String> getCategoriesExtraAttributes(String categoryName) {
+        for (MatchedItemCategoryStored cat : this.categories) {
+            if (categoryName.equals(cat.name)) {
+                return cat.getExtraAttributes();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getTargetExtraAttributes(String targetName) {
+        for (MatchedItemTargetStored target : this.targets) {
+            if (targetName.equals(target.name)) {
+                return target.getExtraAttributes();
+            }
+        }
+        return null;
+    }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -124,4 +143,5 @@ public class MatchedItemStored implements MatchedItem {
         }
         return sb.toString();
     }
+
 }

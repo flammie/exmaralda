@@ -45,10 +45,12 @@ import javax.xml.bind.annotation.*;
     "sentencesLayer",
     "lemmasLayer",
     "posTagsLayer",
+    "topologicalFieldsLayer",
     "constituentParsingLayer",
     "dependencyParsingLayer",
     "morphologyLayer",
     "namedEntitiesLayer",
+    "chunksLayer",
     "referencesLayer",
     "relationsLayer",
     "matchesLayer",
@@ -126,6 +128,11 @@ public class TextCorpusStored implements TextCorpus {
     }
 
     @Override
+    public TopologicalFieldsLayer createTopologicalFieldsLayer (String tagset) { 
+    	return initializeLayer(TopologicalFieldsLayerStored.class, tagset); 
+    }
+
+    @Override
     public SentencesLayer createSentencesLayer() {
         return initializeLayer(SentencesLayerStored.class);
     }
@@ -160,8 +167,18 @@ public class TextCorpusStored implements TextCorpus {
     }
 
     @Override
+    public MorphologyLayer createMorphologyLayer(String tagset) {
+        return initializeLayer(MorphologyLayerStored.class, tagset);
+    }
+
+    @Override
     public MorphologyLayer createMorphologyLayer(boolean hasSegmentation) {
         return initializeLayer(MorphologyLayerStored.class, Boolean.valueOf(hasSegmentation));
+    }
+
+    @Override
+    public MorphologyLayer createMorphologyLayer(String tagset, boolean hasSegmentation) {
+        return initializeLayer(MorphologyLayerStored.class, tagset, Boolean.valueOf(hasSegmentation));
     }
 
     @Override
@@ -170,8 +187,18 @@ public class TextCorpusStored implements TextCorpus {
     }
 
     @Override
+    public MorphologyLayer createMorphologyLayer(String tagset, boolean hasSegmentation, boolean hasCharOffsets) {
+        return initializeLayer(MorphologyLayerStored.class, tagset, Boolean.valueOf(hasSegmentation), Boolean.valueOf(hasCharOffsets));
+    }
+
+    @Override
     public NamedEntitiesLayer createNamedEntitiesLayer(String entitiesType) {
         return initializeLayer(NamedEntitiesLayerStored.class, entitiesType);
+    }
+
+    @Override
+    public ChunksLayer createChunksLayer(String entitiesType) {
+        return initializeLayer(ChunksLayerStored.class, entitiesType);
     }
 
     @Override
@@ -290,7 +317,7 @@ public class TextCorpusStored implements TextCorpus {
     public DiscourseConnectivesLayer createDiscourseConnectivesLayer(String typesTagset) {
         return initializeLayer(DiscourseConnectivesLayerStored.class, typesTagset);
     }
-    
+
     @Override
     public WordSensesLayer createWordSensesLayer(String source) {
         return initializeLayer(WordSensesLayerStored.class, source);
@@ -380,6 +407,16 @@ public class TextCorpusStored implements TextCorpus {
     public PosTagsLayerStored getPosTagsLayer() {
         return ((PosTagsLayerStored) layersInOrder[TextCorpusLayerTag.POSTAGS.ordinal()]);
     }
+    
+    @XmlElement(name = TopologicalFieldsLayerStored.XML_NAME)
+    protected void setTopologicalFieldsLayer(TopologicalFieldsLayerStored layer) {
+        layersInOrder[TextCorpusLayerTag.TOPOLOGICAL_FIELDS.ordinal()] = layer;
+    }
+
+    @Override
+    public TopologicalFieldsLayerStored getTopologicalFieldsLayer() {
+        return ((TopologicalFieldsLayerStored) layersInOrder[TextCorpusLayerTag.TOPOLOGICAL_FIELDS.ordinal()]);
+    }
 
     @XmlElement(name = ConstituentParsingLayerStored.XML_NAME)
     protected void setConstituentParsingLayer(ConstituentParsingLayerStored layer) {
@@ -419,6 +456,16 @@ public class TextCorpusStored implements TextCorpus {
     @Override
     public NamedEntitiesLayerStored getNamedEntitiesLayer() {
         return ((NamedEntitiesLayerStored) layersInOrder[TextCorpusLayerTag.NAMED_ENTITIES.ordinal()]);
+    }
+    
+    @XmlElement(name = ChunksLayerStored.XML_NAME)
+    protected void setChunksLayer(ChunksLayerStored layer) {
+        layersInOrder[TextCorpusLayerTag.CHUNKS.ordinal()] = layer;
+    }
+
+    @Override
+    public ChunksLayerStored getChunksLayer() {
+        return ((ChunksLayerStored) layersInOrder[TextCorpusLayerTag.CHUNKS.ordinal()]);
     }
 
     @XmlElement(name = ReferencesLayerStored.XML_NAME)
@@ -551,12 +598,11 @@ public class TextCorpusStored implements TextCorpus {
         layersInOrder[TextCorpusLayerTag.TEXT_SOURCE.ordinal()] = layer;
     }
 
-
     @Override
     public DiscourseConnectivesLayerStored getDiscourseConnectivesLayer() {
         return ((DiscourseConnectivesLayerStored) layersInOrder[TextCorpusLayerTag.DISCOURSE_CONNECTIVES.ordinal()]);
     }
-    
+
     @XmlElement(name = WordSensesLayerStored.XML_NAME)
     protected void setWordSensesLayer(WordSensesLayerStored layer) {
         layersInOrder[TextCorpusLayerTag.WORD_SENSES.ordinal()] = layer;
@@ -617,4 +663,5 @@ public class TextCorpusStored implements TextCorpus {
         tc.connectLayers();
         return tc;
     }
+
 }

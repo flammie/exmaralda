@@ -27,8 +27,10 @@ import eu.clarin.weblicht.wlfxb.tc.api.PhoneticsSegment;
 import eu.clarin.weblicht.wlfxb.tc.api.Pronunciation;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -43,10 +45,18 @@ public class PhoneticsSegmentStored implements PhoneticsSegment {
     protected String tokRef;
     @XmlElement(name = PronunciationStored.XML_NAME, required = true)
     protected List<PronunciationStored> prons = new ArrayList<PronunciationStored>();
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
+
 
     @Override
     public Pronunciation[] getPronunciations() {
         return prons.toArray(new Pronunciation[prons.size()]);
+    }
+
+    @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+        return PhoneticsSegment.super.retrieveAttributes(extraAttributes);
     }
 
     @Override

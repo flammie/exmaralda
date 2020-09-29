@@ -18,31 +18,39 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
  */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
- * @author Yana Panchenko
+ * The <tt>ChunkLayer</tt> layer represents chunk annotations on tokens. The
+ * layer specifies the tagset used for chunk categories.A chunk is consists of
+ * one or more tokens.
  *
+ * @author Mohammad Fazleh Elahi
  */
-public interface MatchedItem {
+public interface ChunksLayer extends TextCorpusLayer {
 
-    public String[] getOriginCorpusTokenIds();
+    public String getTagset();
 
-    public Set<String> getTargetNames();
+    public Chunk getChunk(int index);
 
-    public String getTargetValue(String targetName);
+    public Chunk getChunk(Token token);
 
-    public Set<String> getCategoriesNames();
+    public List<Chunk> getChunks(Token token);
 
-    public String getCategoryValue(String categoryName);
+    public Token[] getTokens(Chunk chunk);
 
-    public LinkedHashMap<String, String> getCategoriesExtraAttributes(String categoryName);
+    public Chunk addChunk(LinkedHashMap<String, String> types, List<Token> chunkTokens);
 
-    public LinkedHashMap<String, String> getTargetExtraAttributes(String targetName);
+    public Chunk addChunk(LinkedHashMap<String, String> types, Token chunkToken);
+
+    public Set<String> getFoundTypes();
 }

@@ -35,10 +35,12 @@ public class TextCorpusLayersConnector {
     protected Map<String, Lemma> lemmaId2ItsLemma = new HashMap<String, Lemma>();
     protected Map<Token, Lemma> token2ItsLemma = new HashMap<Token, Lemma>();
     protected Map<Token, PosTag> token2ItsPosTag = new HashMap<Token, PosTag>();
+    protected Map<Token, TopologicalField> token2ItsTopoField = new HashMap<>();
     protected Map<Token, Sentence> token2ItsSentence = new HashMap<Token, Sentence>();
     protected Map<Token, MorphologyAnalysis> token2ItsAnalysis = new HashMap<Token, MorphologyAnalysis>();
     //Map<Token,NamedEntity> token2ItsNE = new HashMap<Token,NamedEntity>();
     protected Map<Token, List<NamedEntity>> token2ItsNE = new HashMap<Token, List<NamedEntity>>();
+    protected Map<Token, List<Chunk>> token2ItsCH = new HashMap<Token, List<Chunk>>();
     //Map<Token,Referent> token2ItsReferent = new HashMap<Token,Referent>();
     protected Map<Token, List<ReferencedEntity>> token2ItsReferent = new HashMap<Token, List<ReferencedEntity>>();
     protected Map<String, Reference> referenceId2ItsReference = new HashMap<String, Reference>();

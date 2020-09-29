@@ -28,8 +28,10 @@ import eu.clarin.weblicht.wlfxb.tc.api.ConstituentReference;
 import eu.clarin.weblicht.wlfxb.utils.CommonAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import javax.xml.bind.annotation.*;
+import javax.xml.namespace.QName;
 
 /**
  * @author Yana Panchenko
@@ -54,6 +56,8 @@ public class ConstituentStored implements Constituent {
     protected List<ConstituentReferenceStored> crefs = new ArrayList<ConstituentReferenceStored>();
     @XmlElement(name = ConstituentStored.XML_NAME)
     protected List<ConstituentStored> children = new ArrayList<ConstituentStored>();
+    @XmlAnyAttribute
+    protected LinkedHashMap<QName, String> extraAttributes = new LinkedHashMap<QName, String>();
 
     @Override
     public boolean isTerminal() {
@@ -97,6 +101,11 @@ public class ConstituentStored implements Constituent {
     }
 
     @Override
+    public LinkedHashMap<String, String> getExtraAttributes() {
+       return Constituent.super.retrieveAttributes(extraAttributes);
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (constituentId != null) {
@@ -125,4 +134,5 @@ public class ConstituentStored implements Constituent {
         }
         return sb.toString();
     }
+
 }

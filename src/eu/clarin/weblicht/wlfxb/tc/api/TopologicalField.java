@@ -18,16 +18,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- *
- */
 package eu.clarin.weblicht.wlfxb.tc.api;
 
-/**
- * @author Yana Panchenko
- *
- */
-public interface PhoneticsSegment extends ExtraAttributes{
+public interface TopologicalField extends ExtraAttributes{
 
-    public Pronunciation[] getPronunciations();
+    public String getString();
 }
